@@ -1,0 +1,207 @@
+-- SQLBook: Code
+
+CREATE TABLE Customer(
+   customer_ID INT NOT NULL PRIMARY KEY,
+   Address VARCHAR(40),
+   PhoneNumber VARCHAR(17),
+   type char(1) NOT NULL CHECK(type IN('I','C'))
+ );
+CREATE TABLE IndividualCustomer(
+   ID int,
+   FirstName VARCHAR(40) NOT NULL,
+   LastName VARCHAR(40) NOT NULL,
+   ContactNumber VARCHAR(17),
+   DOB DATE NOT NULL,
+   AGE AS DATEDIFF(YEAR, DOB, GETDATE()),
+   FOREIGN KEY (ID) REFERENCES Customer(customer_ID)
+ );
+CREATE TABLE CCustomer(
+   ID int,
+   CompanyName VarChar(60) NOT NULL,
+         TAXID VARCHAR(17) NOT NULL,
+        ResaleLicense VarChar(12) NOT NULL,
+        Discount VARCHAR(20),
+       FOREIGN KEY (ID) REFERENCES Customer(customer_ID)
+ );
+
+CREATE TABLE Reservation (
+    ReservationID INT PRIMARY KEY,
+    CustomerID VARCHAR (17),
+    RoomID INT, 
+    StartDate DATE NOT NULL,
+    EndDate DATE,
+    StartTime TIME,
+    EndTime TIME,
+    Type VARCHAR(50),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(customer_ID),
+    FOREIGN KEY (RoomID) REFERENCES Reservation(ReservationID)
+);
+
+CREATE TABLE Event (
+Event (ReservationID, EventDescription)
+ReservationID INT PRIMARY KEY,
+EventDescription VARCHAR(200)
+FOREIGN KEY (ReservationID) REFERENCES Reservation(EventID)
+
+);
+
+CREATE TABLE Zip (
+    ZipID INT PRIMARY KEY,
+    City VARCHAR(100),
+    State VARCHAR(20)
+);
+CREATE TABLE Product(
+ProductID INT NOT NULL PRIMARY KEY,
+SKU INT(8),
+ProductType VARCHAR(1) NOT NULL CHECK(ProductType IN('C','M', ‘B’)),
+SubCategory VARCHAR(6),
+PricePerUnit DECIMAL(10,2),
+OrderQuantity INT
+);
+CREATE TABLE OrderLine (
+    OrderLineID INT PRIMARY KEY, 
+    OrderID INT,
+    ProductID INT,
+    Quantity INT,
+    FOREIGN KEY (OrderID) REFERENCES Order(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+);
+CREATE TABLE Bottle(
+BottleID INT NOT NULL ,
+ProductID int NOT NULL,
+PRIMARY KEY(BottleID, ProductID),
+FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+BottleSize VARCHAR(2),
+BottleType VARCHAR(1),
+Capacity INT,
+Shape VARCHAR(10),
+Color VARCHAR(15),
+Price DECIMAL(10,2),
+FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+);
+CREATE TABLE Vineyard (
+VineyardID INT NOT NULL  PRIMARY KEY,
+Location VARCHAR(40),
+Size INT,
+Acres INT,
+GrapesPlanted VARCHAR(25),
+EmployeeID INT,
+   FOREIGN KEY (EmployeeID) REFERENCES Employee(ID)
+);
+CREATE TABLE Vendor (
+    VendorID INT NOT NULL  PRIMARY KEY,
+    VendorName VARCHAR(255),
+    VendorAddress VARCHAR(50),
+   Zip INT,
+    VendorPhone VARCHAR(20),
+    VendorEmail VARCHAR(255),
+    PrincipalContact VARCHAR(255),
+    FOREIGN KEY (Zip) REFERENCES Zip(ZipID)
+);
+
+CREATE TABLE PurchaseOrder (
+PurchaseOrderID INT PRIMARY KEY,
+Quantity INT,
+Type INT,
+Description VARCHAR(300),
+OrderStatus VARCHAR(14),
+VendorID INT,
+FOREIGN KEY (VendorID) REFERENCES Vendor(VendorID)
+);
+CREATE TABLE Grape (
+GrapeID INT PRIMARY KEY,
+GrapeVariety VARCHAR(25),
+JuiceConversionRatio INT,
+JuiceExtracted INT,
+TypeOfStorage VARCHAR(20),
+AgingRequirements INT,
+Weight INT,
+Ripeness INT
+);
+CREATE TABLE Wine ( 
+WineID INT PRIMARY KEY, 
+WineMakerID INT,
+Name VARCHAR(15), 
+VintageYear INT, 
+Category VARCHAR(10), 
+AlcoholPercentage FLOAT, 
+FOREIGN KEY (WineMakerID) REFERENCES Employee(ID) 
+);
+CREATE TABLE CompositionWIne(
+GrapeID INT NOT NULL,
+WineID INT NOT NULL,
+PRIMARY KEY( GrapeID, WineID),
+FOREIGN KEY (GrapeID) REFERENCES Grape(ID)
+FOREIGN KEY (WineID) REFERENCES Wine(ID)
+);
+CREATE TABLE Order_T (
+OrderID INT PRIMARY KEY,
+Date DATE NOT NULL,
+Total DECIMAL(10,2),
+FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID),
+FOREIGN KEY (CustomerID) REFERENCES Customer(customer_ID)
+);
+CREATE TABLE Payment (
+PaymentID INT PRIMARY KEY,
+PaymentType VARCHAR(20),
+PaymentDate DATE NOT NULL,
+Amount DECIMAL(10,2)
+);
+CREATE TABLE OrderLine (
+OrderLine (OrderID, ProductID)
+Quantity INT,
+OrderID INT,
+ProductID INT,
+FOREIGN KEY (OrderID) REFERENCES Order_T(OrderID),
+FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+); 
+
+
+
+
+CREATE TABLE Employee( 
+ID INT NOT NULL PRIMARY KEY, 
+Name VarChar(30) NOT NULL, 
+SSN int, 
+PhoneNumber VarChar(11), 
+Email VarChar(20), 
+Address  VarChar(40), 
+Zip int, 
+JobType char(1) NOT NULL CHECK(JobType IN('W','D', 'I')),  
+EmergencyContactName VARCHAR(40), 
+EmergencyContactNumber VARCHAR(17), 
+JobTitle VarChar(20), 
+StartDate Date NOT NULL, 
+StartPayRate Float, 
+CurrentPayRate Float, 
+ManagerID INT, 
+FOREIGN KEY (Zip) REFERENCES Zip(ZipID), 
+FOREIGN KEY (ManagerID) REFERENCES Employee(ID) 
+);
+
+CREATE TABLE DEmployee(
+ID INT,
+CDL INT NOT NULL,
+CDLExpierationDate DATE NOT NULL,
+FOREIGN KEY (ManagerID) REFERENCES Employee(ID)
+);
+CREATE TABLE WEmployee(
+ID INT,
+CertificationHours INT NOT NULL,
+CertificationDate DATE NOT NULL,
+FOREIGN KEY (ID) REFERENCES Employee(ID)
+);
+CREATE TABLE IEmployee(
+ID INT,
+Position VarChar(20) NOT NULL,
+GradDate Date NOT NULL,
+Weekly Hours TIME NOT NULL,
+InternRequierments VarChar(50),
+Field VarChar(20),
+FOREIGN KEY (ID) REFERENCES Employee(ID)
+);
+
+
+
+
+
